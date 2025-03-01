@@ -1,0 +1,5 @@
+django-admin startproject foodonline_main .
+
+python manage.py runserver
+
+python manage.py createsuperuser
