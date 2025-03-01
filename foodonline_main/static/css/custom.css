@@ -1,0 +1,17 @@
+
+@keyframes show-toast {
+  0% { top: -50px; opacity: 0; display: block; }
+  10% { top: 20px; opacity: 1; }
+  90% { top: 20px; opacity: 1; }
+  100% { top: -50px; opacity: 0; display: none; }
+}
+
+.show-notification {
+  position: fixed;
+  top: -50px;  /* Initially hidden */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  animation: show-toast 6s ease-in-out forwards;
+  z-index: 99999; /* Ensures it's above everything */
+}
