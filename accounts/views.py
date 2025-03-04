@@ -12,6 +12,7 @@ from .models import (
   UserProfile
 )
 from vendor.forms import VendorForm
+from vendor.models import Vendor
 from .utils import detectUser, send_verification_email
 
 def check_role_customer(user):
@@ -143,7 +144,11 @@ def customerDashboard(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def vendorDashboard(request):
-  return render(request, 'accounts/vendorDashboard.html')
+  vendor = Vendor.objects.get(user = request.user)
+  context ={
+    'vendor' : vendor
+  }
+  return render(request, 'accounts/vendorDashboard.html', context)
 
 def activate(request, uidb64, token):
   # activate user by setting is_active=True

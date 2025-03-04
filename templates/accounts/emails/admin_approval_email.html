@@ -1,0 +1,10 @@
+{% autoescape off %}
+
+Hi {{ user.first_name }},
+{% if is_approved %}
+"Congratulations! Your restaurant has been approved to publish its food menu on our marketplace."
+{% else %}
+We’re sorry, but your food menu isn’t eligible for publication on our marketplace at this time. For more details, please contact support@foodonline.com
+{% endif %}
+
+{% endautoescape %}

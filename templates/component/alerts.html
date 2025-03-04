@@ -3,7 +3,7 @@
   <div class="container mt-1 show-notification">
     <div class="row">
       {% for message in messages %}
-        <div class="col-8 offset-2 col-md-6 offset-md-3 alert alert-{{message.tags}} custom-toast-alert" role="alert">
+        <div class="col-8 offset-2 col-md-6 offset-md-3 alert alert-{{message.tags}}" role="alert">
           {{ message }}
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -13,19 +13,3 @@
     </div>
   </div>
 {% endif %}
-
-
-<!-- {% if messages %}
-<div class="container d-flex justify-content-center mt-3">
-  <div class="col-6 show-notification text-center">
-    {% for message in messages %}
-      <div class="alert alert-success" role="alert">
-        {{ message }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    {% endfor %}
-  </div>
-</div>
-{% endif %} -->
