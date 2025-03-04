@@ -36,11 +36,11 @@
                 <span>Hello, {{ request.user.first_name }} |</span>
                 <a href="{% url 'logout' %}" class="cs-color cs-popup-joinus-btn login-popup text-danger ml-0">Logout</a>
               {% else %}
-                <a class="cs-color cs-popup-joinus-btn login-popup" href="{% url 'login' %}">
+                <a class="cs-color login-popup" href="{% url 'login' %}">
                   Login 
-                </a>/
+                </a> /
                 <spa>
-                  <a class="cs-color cs-popup-joinus-btn login-popup ml-0" href="{% url 'registerUser' %}">
+                  <a class="cs-color login-popup ml-0" href="{% url 'registerUser' %}">
                   Register 
                   </a> 
                 </spa>
