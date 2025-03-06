@@ -203,8 +203,9 @@ def reset_password_validate(request, uidb64, token):
 
 def reset_password(request):
   
-  uid = request.session.get('uid')  # Get UID from session
-  token = request.session.get('reset_token')  # Get Token from session
+  uid = request.session.pop('uid', None)  # Get UID from session
+  token =request.session.pop('reset_token', None)  # Get Token from session
+          
 
   if not uid or not token:  # If no UID or token, block access
     messages.error(request, "Unauthorized access. Please request a new reset link.")
@@ -229,8 +230,7 @@ def reset_password(request):
           user.save()
 
           # Clear session after successful reset
-          request.session.pop('uid', None)
-          request.session.pop('reset_token', None)
+          
 
           messages.success(request, "Password reset successfully. Please log in.")
           return redirect('login')

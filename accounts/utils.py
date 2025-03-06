@@ -5,6 +5,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from .models import User
+from django.urls import reverse
 from django.conf import settings
 
 def detectUser(user):
@@ -15,7 +16,7 @@ def detectUser(user):
     redirectUrl = "customerDashboard"
     return redirectUrl
   elif user.role is None and user.is_super_admin:
-    redirectUrl = "admin"
+    redirectUrl = reverse("admin:index")
     return redirectUrl
   
 
