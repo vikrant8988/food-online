@@ -4,7 +4,12 @@ from accounts.utils import send_notification
 
 # Create your models here.
 class Vendor(models.Model):
-  user = models.OneToOneField(User, related_name="user", on_delete=models.CASCADE)
+  user = models.OneToOneField(
+        User,
+        related_name="user",
+        on_delete=models.CASCADE,
+        limit_choices_to={'role': User.VENDOR}  # Restrict choices at the database level
+    )
   user_profile = models.OneToOneField(UserProfile, related_name="userprofile", on_delete=models.CASCADE)
   vendor_name = models.CharField(max_length=50)
   vendor_license = models.ImageField(upload_to="vendor/license")

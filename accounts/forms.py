@@ -24,8 +24,10 @@ class UserProfileForm(forms.ModelForm):
   profile_picture = forms.FileField(widget=forms.FileInput(), validators=[image_type_validator])
   cover_photo = forms.FileField(widget=forms.FileInput(), validators=[image_type_validator])
   
-  latitude = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-  longitude = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+  # latitude = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+  # longitude = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+  latitude = forms.CharField(widget=forms.TextInput())
+  longitude = forms.CharField(widget=forms.TextInput())
   class Meta:
     model = UserProfile
     fields = ["profile_picture", "cover_photo", "address_line", "country", "state", "city", "pincode", "latitude", "longitude"]

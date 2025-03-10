@@ -1,0 +1,75 @@
+{% extends 'base.html' %} {% load static %}
+{% block content %} 
+<!-- Message Display -->
+{% include 'component/alerts.html' %}
+
+
+<div class="main-section">
+  {% include 'component/cover.html' %}
+  <div class="page-section account-header buyer-logged-in">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <!-- load sidebar here -->
+          {% include 'component/v_sidebar.html' %}
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          <div class="user-dashboard loader-holder">
+            <div class="user-holder">
+              <h5  class="text-uppercase">Add Your Food Menu</h5>
+              <hr>
+              <button class="btn btn-secondary btn-sm" onclick="history.back()">Back</button>
+              <br>
+              <h6 class="text-center">Category : <span class="text-uppercase text-success">{{category}}</span> </h6>
+              {% if food_items %}
+              <!-- My Restaurants Form Start -->
+                <table class="table table-hover table-borderless" style="margin-top: 1rem !important;">
+                  <thead class="text-white" style="background-color: #A9A9A9;">
+                    <tr >
+                      <th scope="col" class="text-left">ID</th>
+                      <th scope="col" class="text-left">Image</th>
+                      <th scope="col" class="text-left">Title</th>
+                      <th scope="col" class="text-left">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for food in food_items %}
+                    <tr>
+                      <td class="text-left">{{ forloop.counter }}</td>
+                      <td class="text-left">
+                        <img src="{{food.image.url}}" alt="Food Image" width="40" style="border-radius: 4px;"/>
+                      </td>
+                      <td class="text-left">
+                        <a href="">
+                          <p class="mb-0 font-weight-bold">{{ food }}</p>
+                          <small class="text-muted">{{food.description}}</small>
+                        </a>
+                      </td>
+                      <td class="text-left">
+                        <i class="fa fa-pencil text-primary"></i>&nbsp;|&nbsp;
+                        <i class="fa fa-trash text-danger"></i>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              <!-- My Restaurants Form End -->
+              {% else %}
+                <h6 class="text-center text-muted">No Food Items</h6>
+                <div class="text-center">
+                  <a href="#" class="btn btn-success m-1 btn-sm">
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;Add Food
+                  </a>
+                </div>
+
+              {% endif %}
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -12,8 +12,8 @@
           ><i class="icon-building"></i>My Restaurant</a
         >
       </li>
-      <li>
-        <a href="restaurant-menu-builder.html"
+      <li class="{% if url_name == 'menu_builder' or url_name == 'add_category' %}active{% endif %}">
+        <a href="{% url 'menu_builder' %}"
           ><i class="icon-menu5"></i>Menu Builder</a
         >
       </li>

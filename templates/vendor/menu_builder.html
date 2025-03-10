@@ -1,0 +1,79 @@
+{% extends 'base.html' %} {% load static %}
+{% block content %} 
+<!-- Message Display -->
+{% include 'component/alerts.html' %}
+{% include 'component/category_add_model.html' %}
+{% include 'component/food_items_add_model.html' %}
+
+<div class="main-section">
+  {% include 'component/cover.html' %}
+  <div class="page-section account-header buyer-logged-in">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <!-- load sidebar here -->
+          {% include 'component/v_sidebar.html' %}
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          <div class="user-dashboard loader-holder">
+            <div class="user-holder">
+              <h5 class="text-uppercase">Add Your Food Menu</h5>
+              <hr>
+              <h6 style="text-align: center;">Menu Categories</h6>
+              <a href="#foodModel"class="btn btn-success float-right m-1 btn-sm" data-toggle="modal">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;Add Food
+              </a>
+              <a href="#categoryModel" class="btn btn-info float-right m-1 btn-sm" data-toggle="modal">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;Add Category
+              </a>
+              <!-- My Restaurants Form Start -->
+              <table class="table table-hover table-borderless">
+                <thead class="text-white" style="background-color: #A9A9A9;">
+                  <tr >
+                    <th scope="col" class="text-left">ID</th>
+                    <th scope="col" class="text-left">Title</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for cat in categories %}
+                  <tr>
+                    <td class="text-left">{{ forloop.counter }}</td>
+                    <td class="text-left">
+                      <a href="{% url 'food_items_by_category' cat.id %}">
+                        <p class="mb-0 font-weight-bold">{{ cat }}</p>
+                        <small class="text-muted">{{cat.description}}</small>
+                      </a>
+                    </td>
+                    <td>
+                      <a href="{% url 'edit_category' cat.id %}">
+                        <i class="fa fa-pencil text-primary"></i>
+                      </a>
+                      &nbsp;|&nbsp;
+                      <a href="{% url 'delete_category' cat.id %}" onclick="return confirm('Are you sure you want to delete this category.')">
+                        <i class="fa fa-trash text-danger"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <!-- My Restaurants Form End -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if show_category_modal %}
+<script>
+  $(document).ready(function () {
+    $('#categoryModel').modal('show');
+  });
+</script>
+{% endif %}
+
+
+{% endblock %}
