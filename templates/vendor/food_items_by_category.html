@@ -29,6 +29,7 @@
                       <th scope="col" class="text-left">ID</th>
                       <th scope="col" class="text-left">Image</th>
                       <th scope="col" class="text-left">Title</th>
+                      <th scope="col" class="text-left">Available</th>
                       <th scope="col" class="text-left">Action</th>
                     </tr>
                   </thead>
@@ -40,14 +41,26 @@
                         <img src="{{food.image.url}}" alt="Food Image" width="40" style="border-radius: 4px;"/>
                       </td>
                       <td class="text-left">
-                        <a href="">
+                        <a href="#">
                           <p class="mb-0 font-weight-bold">{{ food }}</p>
                           <small class="text-muted">{{food.description}}</small>
                         </a>
                       </td>
+                      <td>
+                        {% if food.is_available %}
+                          <span class="badge badge-success">Available</span>
+                        {% else %}
+                          <span class="badge badge-secondary">Not Available</span>
+                        {% endif %}
+                      </td>
                       <td class="text-left">
-                        <i class="fa fa-pencil text-primary"></i>&nbsp;|&nbsp;
-                        <i class="fa fa-trash text-danger"></i>
+                        <a href="{% url 'edit_food' food.id %}">
+                          <i class="fa fa-pencil text-primary"></i>
+                        </a>
+                        &nbsp;|&nbsp;
+                        <a href="{% url 'delete_food' food.id %}" onclick="return confirm('Are you sure you want to delete this Food Item?')">
+                          <i class="fa fa-trash text-danger"></i>
+                        </a>
                       </td>
                     </tr>
                     {% endfor %}

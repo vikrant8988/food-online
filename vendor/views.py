@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render, get_object_or_404
 
-from menu.forms import CategoryForm
+from menu.forms import CategoryForm, FoodItemForm
 
 from .forms import VendorForm
 from accounts.forms import UserProfileForm
@@ -48,9 +48,11 @@ def menu_builder(request):
   vendor = get_vendor(request)
   categories = Category.objects.filter(vendor=vendor).order_by('created_at')
   category_form = CategoryForm()
+  food_form = FoodItemForm(vendor=vendor)
   context = {
     'categories' : categories,
-    'category_form' : category_form
+    'category_form' : category_form,
+    'food_form' : food_form
   }
   return render(request, 'vendor/menu_builder.html', context)
 
@@ -119,3 +121,60 @@ def delete_category(request, pk=None):
   category.delete()
   messages.success(request, 'Category Deleted Successfully.')
   return redirect('menu_builder')  # redirect on success
+
+
+def add_food(request):
+  if request.method == 'POST':
+    form = FoodItemForm(request.POST, request.FILES)
+    if form.is_valid():
+      food_title = form.cleaned_data['food_title']
+      food_item = form.save(commit=False)
+      food_item.vendor = get_vendor(request)
+      food_item.slug = slugify(food_title)
+      food_item.save()
+      messages.success(request, 'Category Added Successfully.')
+      return redirect('food_items_by_category', food_item.category.id)  # redirect on success
+    else:
+      vendor = get_vendor(request)
+      categories = Category.objects.filter(vendor=vendor)
+      messages.error(request, 'Add Unsuccessful. Please fix the errors below.')
+      context = {
+        'food_form': form,
+        'categories': categories,
+        'show_category_modal': True,
+      }
+      return render(request, 'vendor/menu_builder.html', context)
+
+  return redirect('menu_builder')
+
+def edit_food(request, pk=None):
+  food = get_object_or_404(FoodItem, pk=pk)
+  if request.method == 'POST':
+    form = FoodItemForm(request.POST, request.FILES, instance=food)
+    if form.is_valid():
+      food_title = form.cleaned_data['food_title']
+      form = form.save(commit=False)
+      form.vendor = get_vendor(request)
+      form.slug = slugify(food_title)
+      form.save()
+      messages.success(request, 'Category Added Successfully.')
+      return redirect('food_items_by_category', food.category.id)  # redirect on success
+    else:
+      print(form.errors)
+    
+  else:
+    form = FoodItemForm(instance=food)
+    
+  context = {
+    'form': form,
+    'food': food
+  }
+
+  return render(request, 'vendor/edit_food.html', context)
+
+
+def delete_food(request, pk=None):
+  food = get_object_or_404(FoodItem, pk=pk)
+  food.delete()
+  messages.success(request, 'Food Item Deleted Successfully.')
+  return redirect('food_items_by_category', food.category.id)  # redirect on success
