@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
+from django.template.defaultfilters import slugify
 
 from .forms import UserForm
 from .models import (
@@ -60,7 +61,7 @@ def registerUser(request):
 
 def registerVendor(request):
   if request.user.is_authenticated:
-    return redirect('home')
+    return redirect('myAccount')
   
   if request.method == 'POST':
     user_form = UserForm(request.POST)
@@ -81,7 +82,9 @@ def registerVendor(request):
       email_template = 'accounts/emails/account_verification_email.html'
       send_verification_email(request, user, email_subject, email_template)
       
+      vendor_name = vendor_form.cleaned_data['vendor_name']
       vendor_form = vendor_form.save(commit=False)
+      vendor_form.slug = slugify(vendor_name) + '-' + str(user.id)
       vendor_form.user = user
       user_profile = UserProfile.objects.get(user=user)
       vendor_form.user_profile = user_profile

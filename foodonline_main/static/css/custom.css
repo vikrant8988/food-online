@@ -12,6 +12,10 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 20px;
-  animation: show-toast 6s ease-in-out forwards;
+  animation: show-toast 3s ease-in-out forwards;
   z-index: 99999; /* Ensures it's above everything */
+}
+
+.hover-red-link:hover {
+  color: #dc3545 !important;
 }

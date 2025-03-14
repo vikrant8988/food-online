@@ -6,25 +6,28 @@ from vendor.models import Vendor
 
 class Category(models.Model):
   vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
-  category_name= models.CharField(max_length=50, unique=True)
+  category_name= models.CharField(max_length=50)
   slug = models.SlugField(max_length=100, unique=True)
   description = models.TextField(max_length=250, blank=True)
   created_at = models.DateTimeField(auto_now_add=True)
-  updated_at = models.DateTimeField(auto_now=True)
+  updated_at = models.DateTimeField(auto_now=True)        
   
   class Meta:
     verbose_name = 'Category'
     verbose_name_plural = 'Categories'
+    constraints = [
+      models.UniqueConstraint(fields=['vendor', 'category_name'], name='unique_category_per_vendor')
+    ]
     
   def clean(self):
     self.category_name = self.category_name.capitalize()
   
   def __str__(self):
-    return self.category_name
+    return self.vendor.vendor_name+"-"+self.category_name
   
 class FoodItem(models.Model):
   vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
-  category = models.ForeignKey(Category, on_delete=models.CASCADE)
+  category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='fooditems')
   food_title = models.CharField(max_length=50)
   slug = models.SlugField(max_length=100, unique=True)
   description = models.TextField(max_length=250, blank=True)
@@ -34,9 +37,14 @@ class FoodItem(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   
+  class Meta:
+    constraints = [
+      models.UniqueConstraint(fields=['vendor', 'food_title'], name='unique_food_title_per_vendor')
+    ]
+  
   def clean(self):
     self.food_title = self.food_title.capitalize()
   
   def __str__(self):
-    return self.food_title
+    return self.vendor.vendor_name+"-"+self.food_title
   
