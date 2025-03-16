@@ -19,3 +19,23 @@
 .hover-red-link:hover {
   color: #dc3545 !important;
 }
+
+.main-search.fancy .field-holder input[type="text"]{
+  color: #808080 !important;
+}
+
+.main-search.fancy .field-holder input[type="text"]::-webkit-input-placeholder {
+  color: #808080 !important;
+}
+
+.main-search.fancy .field-holder input[type="text"]:-moz-placeholder {
+  color: #808080 !important;
+}
+
+.main-search.fancy .field-holder input[type="text"]::-moz-placeholder {
+  color: #808080 !important;
+}
+
+.main-search.fancy .field-holder input[type="text"]:-ms-input-placeholder {
+  color: #808080 !important;
+}

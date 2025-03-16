@@ -69,6 +69,11 @@
                             >
                           {% endif %}
                         </span>
+                        <span>
+                          {% if vendor.distance %}
+                            <b>{{ vendor.distance.km|floatformat:1 }}</b> km
+                          {% endif %}
+                        </span>                        
                       </div>
                       <div class="list-option">
                         <a href="{% url 'vendor_detail' vendor.slug %}" class="viewmenu-btn text-color">View Menu</a>

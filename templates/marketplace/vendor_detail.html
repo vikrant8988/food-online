@@ -107,34 +107,35 @@
 
                   <div id="menu-item-list-6272" class="menu-itam-list">
                     {% for category in categories %}
-
-                    <div class="element-title mt-3" id="menu-category-2">
-                      <h5 class="text-color">{{ category.category_name }}</h5>
-                      <span>{{ category.description }}</span>
-                    </div>
-                    <ul>
-                      {% for food in category.fooditems.all %}
-                      <li>
-                        <div class="image-holder">
-                          {% if food.image %}
-                            <img src="{{ food.image.url }}" alt="">
-                          {% else %}
-                            <img src="{% static 'images/no-image.png' %}" alt="">
-                          {% endif %}
+                      {% if category.fooditems.all %}
+                        <div class="element-title mt-3" id="menu-category-2">
+                          <h5 class="text-color">{{ category.category_name }}</h5>
+                          <span>{{ category.description }}</span>
                         </div>
-                        <div class="text-holder">
-                          <h6>{{ food.food_title }}</h6>
-                          <span>{{ food.description }}</span>
-                        </div>
-                        <div class="price-holder">
-                          <span class="price">${{ food.price }}</span>
-                          <a href="#" class="decrease_cart" style="margin-right: 28px;" data-id="{{ food.id }}" data-url="{% url 'decrease_cart' food.id %}"><i class="icon-minus text-color"></i></a>
-                          <label id="qty-{{food.id}}">0</label>
-                          <a href="#" class="add_to_cart" data-id="{{ food.id }}" data-url="{% url 'add_to_cart' food.id %}"><i class="icon-plus4 text-color"></i></a>
-                        </div>
-                      </li>
-                      {% endfor %}
-                    </ul>
+                        <ul>
+                          {% for food in category.fooditems.all %}
+                          <li>
+                            <div class="image-holder">
+                              {% if food.image %}
+                                <img src="{{ food.image.url }}" alt="">
+                              {% else %}
+                                <img src="{% static 'images/no-image.png' %}" alt="">
+                              {% endif %}
+                            </div>
+                            <div class="text-holder">
+                              <h6>{{ food.food_title }}</h6>
+                              <span>{{ food.description }}</span>
+                            </div>
+                            <div class="price-holder">
+                              <span class="price">${{ food.price }}</span>
+                              <a href="#" class="decrease_cart" style="margin-right: 28px;" data-id="{{ food.id }}" data-url="{% url 'decrease_cart' food.id %}"><i class="icon-minus text-color"></i></a>
+                              <label id="qty-{{food.id}}">0</label>
+                              <a href="#" class="add_to_cart" data-id="{{ food.id }}" data-url="{% url 'add_to_cart' food.id %}"><i class="icon-plus4 text-color"></i></a>
+                            </div>
+                          </li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
                     {% endfor %}
 
                   </div>

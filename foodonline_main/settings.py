@@ -1,6 +1,17 @@
 from pathlib import Path
 from decouple import config
 from django.contrib.messages import constants as messages
+import os
+
+
+# use this if setting up on Windows 10 with GDAL installed from OSGeo4W using defaults 
+if os.name == 'nt':
+    VIRTUAL_ENV_BASE = os.environ.get('VIRTUAL_ENV')
+    if VIRTUAL_ENV_BASE:
+        os.environ['PATH'] = os.path.join(VIRTUAL_ENV_BASE, 'Lib', 'site-packages', 'osgeo') + ';' + os.environ['PATH']
+        os.environ['PROJ_LIB'] = os.path.join(VIRTUAL_ENV_BASE, 'Lib', 'site-packages', 'osgeo', 'data', 'proj')
+        GDAL_LIBRARY_PATH = os.path.join(VIRTUAL_ENV_BASE, 'Lib', 'site-packages', 'osgeo', 'gdal.dll')
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'django.contrib.gis',
     'accounts',
     'vendor',
     'menu',
@@ -76,7 +88,8 @@ WSGI_APPLICATION = 'foodonline_main.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': config('DB_NAME'),
         'USER':config('DB_USER'),
         'PASSWORD':config('DB_PASSWORD'),

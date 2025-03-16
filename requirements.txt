@@ -1,0 +1,9 @@
+asgiref==3.8.1
+Django==5.1.7
+GDAL @ file:///C:/Users/Acer-Nitro/Desktop/Notebook/Django/food-online/GDAL-3.10.1-cp313-cp313-win_amd64.whl#sha256=16d251039cff8b86020b3be514c4f25e1e4635a058c1e7c7e922293552f729ee
+pillow==11.1.0
+psycopg2==2.9.10
+psycopg2-binary==2.9.10
+python-decouple==3.8
+sqlparse==0.5.3
+tzdata==2025.1

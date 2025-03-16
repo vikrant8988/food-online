@@ -143,3 +143,24 @@ $(document).ready(function(){
   })
 
 });
+
+// setting search cordinates
+function setCoordinate() {
+  const location = $('#address').val().trim().split('-');
+  const coordinate = location[1].trim().split(',');
+  const address = location[0].trim();
+  
+  if (coordinate.length !== 2) {
+    alert("Invalid coordinates! Please enter in format: latitude,longitude");
+    return;
+  }
+
+  const lat = coordinate[0].trim();
+  const long = coordinate[1].trim();
+
+  $('#lat').val(lat);
+  $('#long').val(long);
+  $('#address').val(address);
+
+  return true
+}

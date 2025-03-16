@@ -16,6 +16,9 @@ urlpatterns = [
     path('marketplace/', include('marketplace.urls')),
     path('cart/', marketplaceViews.cart, name='cart'),
     
+    # search
+    path('search/', marketplaceViews.search, name='search'),
+    
     path('', views.home, name="home"),
     path('', include('accounts.urls')),
     
