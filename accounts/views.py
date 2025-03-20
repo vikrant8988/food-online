@@ -1,3 +1,4 @@
+from django.db import connection
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages, auth
@@ -142,7 +143,14 @@ def myAccount(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_customer)
 def customerDashboard(request):
-  return render(request, 'accounts/customerDashboard.html')
+  customer = UserProfile.objects.filter(user=request.user).only('profile_picture', 'cover_photo', 'address_line').first()
+  customer.user=request.user
+
+  context ={
+    'customer' : customer
+  }
+  # print(connection.queries[-1])
+  return render(request, 'accounts/customerDashboard.html', context)
 
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)

@@ -8,6 +8,8 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.measure import D  # ``D`` is a shortcut for ``Distance``
 from django.contrib.gis.db.models.functions import Distance
 
+from django.db import connection
+
 from marketplace.context_processor import get_cart_count, get_cart_amount
 from .models import Cart
 from menu.models import Category, FoodItem
