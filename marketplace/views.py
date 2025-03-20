@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Prefetch, Q, Subquery
@@ -10,7 +11,7 @@ from django.contrib.gis.db.models.functions import Distance
 from marketplace.context_processor import get_cart_count, get_cart_amount
 from .models import Cart
 from menu.models import Category, FoodItem
-from vendor.models import Vendor
+from vendor.models import OpeningHour, Vendor
 
 
 # Create your views here.
@@ -33,6 +34,11 @@ def vendor_detail(request, vendor_slug):
     )
   )
   
+  opening_hours = OpeningHour.objects.filter(vendor=vendor)
+  
+  today_day = datetime.today().isoweekday()  # Monday=1 ... Sunday=7
+  today_hours = opening_hours.filter(day=today_day).first()
+  
   if request.user.is_authenticated:
     cart_items = Cart.objects.filter(user=request.user).select_related('food_item')
   else:
@@ -41,7 +47,9 @@ def vendor_detail(request, vendor_slug):
   context = {
     'vendor': vendor,
     'categories': categories,
-    'cart_items' : cart_items
+    'cart_items' : cart_items,
+    'opening_hours': opening_hours,
+    'today_hours': today_hours,
   }
   return render(request, 'marketplace/vendor_detail.html', context)
 

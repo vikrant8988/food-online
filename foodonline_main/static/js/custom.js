@@ -142,6 +142,78 @@ $(document).ready(function(){
     $('#'+the_id).html(qty)
   })
 
+  // opening hours
+  $('#opening-hours').on('submit', function(e){
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const form = this;
+
+    for (let [key, value] of formData.entries()) {
+      console.log(key + ": " + value);
+    }
+
+  const isClosed = formData.has('is_closed');
+  formData.set('is_closed', isClosed ? 'True' : 'False');
+
+  const isValid = formData.get('day') && (isClosed || (formData.get('from_hour') && formData.get('to_hour')));
+
+  if (isValid) {
+    $.ajax({
+      url: formData.get('add_hour_url'),
+      method: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,  
+      success: function(response) {
+        console.log(response)
+        data = response.data
+        html = `
+          <tr id="hour-${data.id}">
+            <td class="text-left">
+              <b>${data.day}</b>
+            </td>
+            <td class="text-center">
+            ${data.is_closed ? 'Closed' : `${data.from_hour} - ${data.to_hour}`}
+            </td>
+            <td class="text-center">
+              <a href="#" class="remove-hour" data-url="/vendor/opening-hours/delete/${data.id}">Remove</a>
+            </td>
+          </tr>
+        `
+        document.getElementById('hour-'+data.id)?.remove()
+        $('.opening_hours').append(html)
+        swal(response.status, response.message, 'success');
+        form.reset()
+      },
+      error: function(error) {
+        const errorMessage = error.responseJSON ? error.responseJSON.message : 'An unexpected error occurred';
+        swal('Error', errorMessage, 'error');
+      }
+    });
+
+  } 
+  else {
+    swal('Please fill all fields', '', 'info');
+  }
+  });
+
+  // remove opening hour
+  $(document).on('click','.remove-hour', function(e){
+    e.preventDefault();
+    url = $(this).attr('data-url')
+
+    $.ajax({
+      type: 'GET',
+      url: url,
+      success: function(response){
+        if(response.status == 'success'){
+          document.getElementById('hour-'+response.id).remove()
+        }
+      }
+    })
+  });
+  // document ready close
 });
 
 // setting search cordinates

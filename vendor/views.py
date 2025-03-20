@@ -1,10 +1,11 @@
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 
 from menu.forms import CategoryForm, FoodItemForm
 
-from .forms import VendorForm
+from .forms import VendorForm, OpeningHourForm
 from accounts.forms import UserProfileForm
-from .models import Vendor
+from .models import Vendor, OpeningHour
 from accounts.models import UserProfile
 from django.contrib import messages
 from menu.models import Category, FoodItem
@@ -178,3 +179,66 @@ def delete_food(request, pk=None):
   food.delete()
   messages.success(request, 'Food Item Deleted Successfully.')
   return redirect('food_items_by_category', food.category.id)  # redirect on success
+
+def opening_hours(request):
+  vendor = Vendor.objects.get(user=request.user)
+  opening_hours = OpeningHour.objects.filter(vendor=vendor).order_by('day')
+  opening_hour_form = OpeningHourForm()
+  context= {
+    'opening_hours': opening_hours,
+    'form' : opening_hour_form
+  }
+  return render(request, 'vendor/opening_hour.html', context)
+
+def add_opening_hours(request):
+  if request.user.is_authenticated:
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'POST':
+      day = request.POST.get('day')
+      from_hour = request.POST.get('from_hour')
+      to_hour = request.POST.get('to_hour')
+      is_closed = request.POST.get('is_closed') == 'True'
+      
+      isValid = day and (is_closed or (from_hour and to_hour))
+      
+      if not isValid:
+        return JsonResponse({'status': 'failed', 'message': 'fields are missing'}, status=400)
+      
+      opening_hours_data = {
+        'from_hour': from_hour,
+        'to_hour': to_hour,
+        'is_closed': is_closed
+      }
+      
+      try:
+        business_hour, created = OpeningHour.objects.update_or_create(
+          vendor=get_vendor(request),
+          day=int(day),
+          defaults=opening_hours_data
+        )
+
+        data = {
+          'from_hour': business_hour.from_hour,
+          'to_hour': business_hour.to_hour,
+          'is_closed': business_hour.is_closed,
+          'day': business_hour.get_day_display(),
+          'id': business_hour.id
+        }
+
+        if created:
+          return JsonResponse({'status': 'success', 'message': 'Opening hour created', 'data':data}, status=201)
+        else:
+          return JsonResponse({'status': 'success', 'message': 'Opening hour updated', 'data':data}, status=200)
+      except Exception as e:
+        print(f"Failure: {str(e)}")
+        return JsonResponse({'status': 'failed', 'message': 'Invalid form data'}, status=400)
+    else:
+      print('Error : Business Hours')
+  return JsonResponse({'status': 'failed', 'message': 'Unauthorized'}, status=401)
+
+
+def delete_opening_hours(request, pk):
+    if request.user.is_authenticated:
+      if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        business_hour = get_object_or_404(OpeningHour, pk=pk)
+        business_hour.delete()
+        return JsonResponse({'status':'success', 'id':pk})

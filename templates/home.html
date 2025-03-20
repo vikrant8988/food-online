@@ -168,8 +168,8 @@
                         </a>
                         {% endif %}
                       </figure>
-                      <span class="restaurant-status close">
-                        <em class="bookmarkRibbon"></em>Close
+                      <span class="restaurant-status {% if vendor.is_open %}open{% else %}close{% endif %}">
+                        <em class="bookmarkRibbon"></em>{% if vendor.is_open %}open{% else %}close{% endif %}
                       </span>
                     </div>
                     <div class="text-holder">

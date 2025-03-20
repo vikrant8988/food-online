@@ -39,3 +39,22 @@ input[type="text"]::-moz-placeholder {
 input[type="text"]:-ms-input-placeholder {
   color: #808080 !important;
 }
+
+.opening_hours {
+  width: 100%;
+}
+
+#opening-hours select{
+  padding: 5px 10px !important;
+}
+
+@media (min-width: 768px) {
+  .opening_hours {
+    width: 60%;
+  }
+}
+
+.add-hour{
+  padding: 7px 15px 7px 15px
+}
+
