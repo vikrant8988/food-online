@@ -28,7 +28,7 @@ class Vendor(models.Model):
     current_time = datetime.now().time()
     isOpen = False
     
-    if today_business_hour:
+    if today_business_hour and not today_business_hour.is_closed:
       from_hour = datetime.strptime(today_business_hour.from_hour, "%I:%M %p").time()
       to_hour = datetime.strptime(today_business_hour.to_hour, "%I:%M %p").time()
       isOpen = current_time >= from_hour and current_time <= to_hour

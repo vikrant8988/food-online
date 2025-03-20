@@ -74,7 +74,6 @@ TEMPLATES = [
                 
                 'accounts.context_processors.get_vendor',
                 'marketplace.context_processor.get_cart_count',
-                'marketplace.context_processor.get_cart_amount'
             ],
         },
     },

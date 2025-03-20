@@ -145,7 +145,8 @@ def decrease_cart(request, food_id):
 def cart(request):
   cart_items = Cart.objects.filter(user=request.user).order_by('created_at').select_related('food_item', 'food_item__vendor')
   context = {
-    'cart_items': cart_items
+    'cart_items': cart_items,
+    'cart_amount': get_cart_amount(request)
   }
   return render(request, 'marketplace/cart.html', context)
 

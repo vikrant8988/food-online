@@ -85,21 +85,23 @@
                         Subtotal
                         <span class="price float-right">
                           <span class="currency">$</span>
-                          <span id="subtotal"> {{ subtotal }} </span>
+                          <span id="subtotal"> {{ cart_amount.subtotal }} </span>
                         </span>
                       </li>
-                      <li style="list-style-type: none;">
-                        Tax
-                        <span class="price float-right">
-                          <span class="currency">$</span>
-                          <span id="tax">{{ tax }}</span>
-                        </span>
-                      </li>
+                      {% for tax in cart_amount.tax_details %}
+                        <li style="list-style-type: none;">
+                          {{ tax.type }} ( {{ tax.percentage }} %)
+                          <span class="price float-right">
+                            <span class="currency">$</span>
+                            <span id="tax-{{ tax.type }}">{{ tax.amount }}</span>
+                          </span>
+                        </li>
+                      {% endfor %}
                       <li style="list-style-type: none;font-weight: 600;">
                         Total
                         <span class="price float-right">
                           <span class="currency">$</span>
-                          <span id="grand_total">{{ grand_total }}</span>
+                          <span id="grand_total">{{ cart_amount.grand_total }}</span>
                         </span>
                       </li>
                     </ul>

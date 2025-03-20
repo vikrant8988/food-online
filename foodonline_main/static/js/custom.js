@@ -24,9 +24,7 @@ $(document).ready(function(){
 
           //subtotal, tax and grand_total
           applyCartAmount(
-            response.cart_amount['subtotal'],
-            response.cart_amount['tax'],
-            response.cart_amount['grand_total']
+            response.cart_amount
           )
         }
       }
@@ -63,9 +61,7 @@ $(document).ready(function(){
 
           //subtotal, tax and grand_total
           applyCartAmount(
-            response.cart_amount['subtotal'],
-            response.cart_amount['tax'],
-            response.cart_amount['grand_total']
+            response.cart_amount
           )
         }
 
@@ -97,9 +93,7 @@ $(document).ready(function(){
 
           //subtotal, tax and grand_total
           applyCartAmount(
-            response.cart_amount['subtotal'],
-            response.cart_amount['tax'],
-            response.cart_amount['grand_total']
+            response.cart_amount
           )
         }
 
@@ -126,11 +120,15 @@ $(document).ready(function(){
   }
 
   // apply cart amount
-  function applyCartAmount(subtotal, tax, grand_total){
+  function applyCartAmount(cart_amount){
     if (window.location.pathname == '/cart/'){
-      $('#subtotal').html(subtotal)
-      $('#tax').html(tax)
-      $('#grand_total').html(grand_total)
+      $('#subtotal').html(cart_amount['subtotal'])
+      console.log(cart_amount);
+      cart_amount['tax_details'].forEach(tax => {
+        $('#tax-'+tax.type)?.html(tax.amount)
+        console.log(`${tax.type} - ${tax.amount}`);
+      })
+      $('#grand_total').html(cart_amount['grand_total'])
     }
   }
 

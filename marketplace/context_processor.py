@@ -1,4 +1,4 @@
-from .models import Cart
+from .models import Cart, Tax
 from menu.models import FoodItem
 from django.db.models import Sum
 
@@ -17,14 +17,30 @@ def get_cart_count(request):
 
 def get_cart_amount(request):
   subtotal = 0
-  tax = 0
-  grand_total = 0
+  tax_details = []
   if request.user.is_authenticated:
     cart_items = Cart.objects.filter(user=request.user)
     for item in cart_items:
       food_item = FoodItem.objects.get(pk=item.food_item.id)
       subtotal += (food_item.price * item.quantity)
       
-    grand_total = subtotal + 0
+    dynamic_tax = Tax.objects.filter(is_active=True)
     
-  return dict(subtotal=subtotal, tax=tax, grand_total=grand_total)
+    grand_total = subtotal
+    
+    for t in dynamic_tax:
+      tax_type = t.tax_type
+      tax_percentage = t.tax_percentage
+      tax_amount = round((tax_percentage*subtotal)/100, 2)
+      tax_details.append({
+        'type': tax_type,
+        'percentage': float(tax_percentage),
+        'amount': tax_amount
+      })
+      grand_total += tax_amount
+
+    return {
+      'subtotal': subtotal,
+      'grand_total': grand_total,
+      'tax_details': tax_details
+    }
