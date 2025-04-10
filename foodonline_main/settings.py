@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'vendor',
     'menu',
     'marketplace',
-    'customers'
+    'customers',
+    'orders'
 ]
 
 MIDDLEWARE = [
@@ -75,6 +76,7 @@ TEMPLATES = [
                 
                 'accounts.context_processors.get_vendor',
                 'marketplace.context_processor.get_cart_count',
+                'accounts.context_processors.get_paypal_client_id'
             ],
         },
     },
@@ -161,3 +163,6 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Your Gmail
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Use an App Password
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <vikrant8988@gmail.com>'
+
+PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'

@@ -26,27 +26,27 @@
                     <ul>
                       {% if cart_items %}
                         {% for item in cart_items %}
-                        <li id="cart-item-{{item.id}}">
-                          <div class="image-holder">
-                            {% if item.food_item.image %}
-                              <img src="{{ item.food_item.image.url }}" alt="">
-                            {% else %}
-                              <img src="{% static 'images/no-image.png' %}" alt="">
-                            {% endif %}
-                          </div>
-                          <div class="text-holder">
-                            <h6>{{ item.food_item.food_title }}</h6>
-                            <span>{{ item.food_item.description }}</span>
-                            <a href="{% url 'vendor_detail' item.food_item.vendor.slug %}" class="badge badge-warning"> {{item.food_item.vendor.vendor_name}}</a>
-                          </div>
-                          <div class="price-holder">
-                            <span class="price">${{ item.food_item.price }}</span>
-                            <a href="#" class="decrease_cart" style="margin-right: 28px;" id="{{item.id}}" data-id="{{ item.food_item.id }}" data-url="{% url 'decrease_cart' item.food_item.id %}"><i class="icon-minus text-color"></i></a>
-                            <label id="qty-{{item.food_item.id}}">0</label>
-                            <a href="#" class="add_to_cart" data-id="{{ item.food_item.id }}" data-url="{% url 'add_to_cart' item.food_item.id %}"><i class="icon-plus4 text-color"></i></a>
-                            <a href="#" class="delete_cart" data-id="{{ item.id }}" data-url="{% url 'delete_cart' item.id %}"><i class="icon-delete text-color"></i></a>
-                          </div>
-                        </li>
+                          <li id="cart-item-{{item.id}}">
+                            <div class="image-holder">
+                              {% if item.food_item.image %}
+                                <img src="{{ item.food_item.image.url }}" alt="">
+                              {% else %}
+                                <img src="{% static 'images/no-image.png' %}" alt="">
+                              {% endif %}
+                            </div>
+                            <div class="text-holder">
+                              <h6>{{ item.food_item.food_title }}</h6>
+                              <span>{{ item.food_item.description }}</span>
+                              <a href="{% url 'vendor_detail' item.food_item.vendor.slug %}" class="badge badge-warning"> {{item.food_item.vendor.vendor_name}}</a>
+                            </div>
+                            <div class="price-holder">
+                              <span class="price">${{ item.food_item.price }}</span>
+                              <a href="#" class="decrease_cart" style="margin-right: 28px;" id="{{item.id}}" data-id="{{ item.food_item.id }}" data-url="{% url 'decrease_cart' item.food_item.id %}"><i class="icon-minus text-color"></i></a>
+                              <label id="qty-{{item.food_item.id}}">{{ item.quantity }}</label>
+                              <a href="#" class="add_to_cart" data-id="{{ item.food_item.id }}" data-url="{% url 'add_to_cart' item.food_item.id %}"><i class="icon-plus4 text-color"></i></a>
+                              <a href="#" class="delete_cart" data-id="{{ item.id }}" data-url="{% url 'delete_cart' item.id %}"><i class="icon-delete text-color"></i></a>
+                            </div>
+                          </li>
                         {% endfor %}
                       {% else %}
                         <div class="text-center p-5">
@@ -56,11 +56,6 @@
                     </ul>
 
                   </div>
-                  {% for item in cart_items %}
-
-                  <span id="qty-{{item.food_item.id}}" class="item-qty d-none" data-qty="{{ item.quantity }}">{{ item.quantity }}</span>
-
-                  {% endfor %}
 
                 </div>
               </div>
@@ -104,6 +99,7 @@
                           <span id="grand_total">{{ cart_amount.grand_total }}</span>
                         </span>
                       </li>
+                      <a href="{% url 'checkout' %}" class="btn btn-success btn-sm w-100 p-2 mt-3 text-uppercase">Proceed to Checkout</a>
                     </ul>
                   </div>
                 </div>

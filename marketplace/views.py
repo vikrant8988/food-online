@@ -10,7 +10,9 @@ from django.contrib.gis.db.models.functions import Distance
 
 from django.db import connection
 
+from accounts.models import UserProfile
 from marketplace.context_processor import get_cart_count, get_cart_amount
+from orders.forms import OrderForm
 from .models import Cart
 from menu.models import Category, FoodItem
 from vendor.models import OpeningHour, Vendor
@@ -220,3 +222,34 @@ def search(request):
   }
 
   return render(request, 'marketplace/listings.html', context)
+
+@login_required(login_url='login')
+def checkout(request):
+  cart_queryset = Cart.objects.filter(user=request.user)
+  
+  cart_items = list(cart_queryset)
+  
+  if len(cart_items) <= 0:
+    return redirect('marketplace')
+  
+  profile = UserProfile.objects.get(user=request.user)
+  
+  form = OrderForm(initial={
+    'first_name': request.user.first_name,
+    'last_name': request.user.last_name,
+    'email': request.user.email,
+    'phone': request.user.phone_number,
+    'address': profile.address_line,
+    'city': profile.city,
+    'state': profile.state,
+    'country': profile.country,
+    'pincode': profile.pincode,
+  })
+    
+  context ={
+    'form': form,
+    'cart_items': cart_items,
+    'cart_amount': get_cart_amount(request)
+  }
+  return render(request, 'marketplace/checkout.html', context)
+

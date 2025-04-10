@@ -14,10 +14,18 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     path('marketplace/', include('marketplace.urls')),
+    
+    # cart
     path('cart/', marketplaceViews.cart, name='cart'),
     
     # search
     path('search/', marketplaceViews.search, name='search'),
+    
+    # checkout
+    path('checkout/', marketplaceViews.checkout, name='checkout'),
+    
+    # order
+    path('place_order/', include('orders.urls')),
     
     path('', views.home, name="home"),
     path('', include('accounts.urls')),

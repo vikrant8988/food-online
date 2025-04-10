@@ -35,7 +35,7 @@ def get_cart_amount(request):
       tax_details.append({
         'type': tax_type,
         'percentage': float(tax_percentage),
-        'amount': tax_amount
+        'amount': float(tax_amount)
       })
       grand_total += tax_amount
 
