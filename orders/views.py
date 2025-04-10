@@ -4,6 +4,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
+import razorpay
 
 from accounts.utils import send_notification
 from marketplace.models import Cart
@@ -11,8 +12,10 @@ from marketplace.context_processor import get_cart_amount
 from orders.forms import OrderForm
 from orders.models import Order, OrderedFood, Payment
 from orders.utils import generate_order_number
+from django.conf import settings
 
-# Create your views here.
+
+client = razorpay.Client(auth=(settings.RZP_KEY_ID, settings.RZP_KEY_SECRET))
 
 @login_required(login_url='login')
 def place_order(request):
@@ -53,6 +56,23 @@ def place_order(request):
       order.total_tax = total_tax
       order.payment_method =  request.POST.get('payment-method')
       order.save()
+      
+      # RazorPay Implementation
+      if order.payment_method == 'RazorPay':
+        razorpay_order = client.order.create({
+          'amount': float(order.total * 100),  # in paise
+          'currency': 'INR',
+          'receipt': 'receipt #'+order.order_number,
+          "notes":{
+            'key1': 'value3',
+            'key2': 'value2'
+          }
+        })
+        razorpay_order_id = razorpay_order['id']
+        context['razorpay_order_id'] = razorpay_order_id
+        context['RZP_KEY_ID'] = settings.RZP_KEY_ID
+        context['rzp_amount'] = float(order.total * 100)
+
       order_number = generate_order_number(order.id)
       Order.objects.filter(id=order.id).update(order_number=order_number)
       # cart_items = Cart.objects.filter(user=request.user).delete()
@@ -61,6 +81,7 @@ def place_order(request):
       order.order_number = order_number
       context['order'] = order
       context['cart_items'] = cart_items
+
       return render(request, 'orders/place_order.html', context) 
     else:
       print(form.errors)

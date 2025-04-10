@@ -104,8 +104,17 @@
                           <span id="grand_total">{{ cart_amount.grand_total }}</span>
                         </span>
                       </li>
-                      <!-- Payal Checkout button -->
-                      <div id="paypal-button-container"></div>
+                      {% if order.payment_method == 'Paypal' %}
+                        <!-- Payal Checkout button -->
+                        <div id="paypal-button-container"></div>
+                      {% elif order.payment_method == 'RazorPay' %}
+                        <div id="rzp_payment_buttton" class="mt-3">
+                          <button class="btn w-100" id="rzp-button1" style="background: linear-gradient(90deg, #2b84e0, #0f72e5); color: white; border: none;">
+                            Pay with Razorpay
+                          </button>
+                          <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+                        </div>
+                        {% endif %}
                     </ul>
                   </div>
                 </div>
@@ -144,6 +153,7 @@
   const csrftoken = getCookie('csrftoken');
   const order_complete_url = "{% url 'order_complete' %}";
 
+  // paypal configuration
   paypal.Buttons({
     createOrder: function(data, actions) {
       return actions.order.create({
@@ -167,7 +177,7 @@
         sendTransaction(transaction_id, payment_method, status)
         const ele = document.getElementById('paypal-button-container')
         ele.innerHTML = ''
-        ele.innerHTML = '<h4 class="text-center"><i class="fa fa-spinner fa-spin"></i>Please wait..... </h4'
+        ele.innerHTML = '<h4 class="text-center" style="color: white;><i class="fa fa-spinner fa-spin"></i>Please wait..... </h4'
       });
     }
   }).render('#paypal-button-container');
@@ -190,6 +200,53 @@
     })
   }
 
+  // RazorPay Payment Gateway
+  let options = {
+    "key": "{{ RZP_KEY_ID }}", // Enter the Key ID generated from the Dashboard
+    "amount": "{{ rzp_amount }}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "FoodOnline", //your business name
+    "description": "FoodOnline - MultiVendor Restaurant Marketplace",
+    "image": "{% static 'logo/foodOnlineLogo.png' %}",
+    "order_id": "{{ razorpay_order_id }}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
+        let payment_method = 'RazorPay'
+        let transaction_id = response.razorpay_payment_id
+        let status = 'success'
+        sendTransaction(transaction_id, payment_method, status)
+        const ele = document.getElementById('rzp-button1')
+        ele.innerHTML = ''
+        ele.innerHTML = '<h4 class="text-center"><i class="fa fa-spinner fa-spin"></i>Please wait..... </h4'
+    },
+    "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
+      "name": "{{ order.name }}", //your customer's name
+      "email": "{{ order.email }}",
+      "contact": "{{ order.phone }}" //Provide the customer's phone number for better conversion rates 
+    },
+    "notes": {
+      "address": "{{ order.address }}"
+    },
+    "theme": {
+      "color": "#dc3545"
+    }
+  };
+  var rzp1 = new Razorpay(options);
+  rzp1.on('payment.failed', function (response){
+    alert(response.error.code);
+    alert(response.error.description);
+    alert(response.error.source);
+    alert(response.error.step);
+    alert(response.error.reason);
+    alert(response.error.metadata.order_id);
+    alert(response.error.metadata.payment_id);
+  });
+  document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+  }
   
 </script>
 
