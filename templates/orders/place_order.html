@@ -104,7 +104,7 @@
                           <span id="grand_total">{{ cart_amount.grand_total }}</span>
                         </span>
                       </li>
-                      {% if order.payment_method == 'Paypal' %}
+                      {% if order.payment_method == 'PayPal' %}
                         <!-- Payal Checkout button -->
                         <div id="paypal-button-container"></div>
                       {% elif order.payment_method == 'RazorPay' %}

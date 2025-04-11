@@ -1,0 +1,142 @@
+{% extends 'base.html' %} {% load static %}
+{% block content %}
+<!-- Message Display -->
+{% include 'component/alerts.html' %}
+
+
+<div class="main-section">
+  {% include 'customers/c_cover.html' %}
+  <div class="page-section account-header buyer-logged-in">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <!-- load sidebar here -->
+          {% include 'component/c_sidebar.html' %}
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          <div class="user-dashboard loader-holder">
+            <div class="user-holder">
+              <!-- Start Order Details -->
+              <div class="container">
+                <div class="row justify-content-center">
+                  <div class="col-md-12">
+                    <div class="bg-white p-1 rounded shadow-sm">
+                      <!-- Logo -->
+                      <img src="{% static 'logo/foodOnlineLogo.png' %}" alt="FoodOnline Logo" width="300"/>
+                      <div class="mt-4 mb-4">
+                        <div class="d-flex flex-column flex-md-row justify-content-between">
+                          <div class="mb-3 mb-md-0">
+                            <h6>Hello {{ order.name }},</h6>
+                            <p>Review your order details below.</p>
+                          </div>
+                          <div style="text-align: right; margin-right: 1rem;">
+                            <p class="mb-1 fw-semibold">{{ order.name }}</p>
+                            <p class="mb-1">{{ order.address }}</p>
+                            <p class="mb-0">{{ order.phone }}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Order Details -->
+                      <div class="d-flex justify-content-between">
+                        <div>
+                          <span class="d-block">Order Date:</span>
+                          <strong>{{ order.created_at }}</strong>
+                        </div>
+                        <div>
+                          <span class="d-block">Order No:</span>
+                          <strong>{{ order.order_number }}</strong>
+                        </div>
+                        <div>
+                          <span class="d-block">Payment Method:</span>
+                          <strong>{{ order.payment_method }}</strong>
+                        </div>
+                        <div>
+                          <span class="d-block">Transaction ID:</span>
+                          <strong>{{ order.payment.transaction_id }}</strong>
+                        </div>
+                      </div>
+                      <!-- Order Items-->
+                      <style>
+                        .table td, .table th {
+                          border-top: 0.5px solid #f1f1f1 !important;
+                          border-bottom: 0.5px solid #f1f1f1 !important;
+                          border-left: none !important;
+                          border-right: none !important;
+                        }
+                      </style>
+                      <table class="table mt-4">
+                        <thead>
+                          <tr>
+                            <th>Image</th>
+                            <th>Food Item</th>
+                            <th>Description</th>
+                            <th>QTY</th>
+                            <th>Price</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for item in ordered_food %}
+                            <tr>
+                              <td>
+                                {% if item.fooditem.image %}
+                                  <img src="{{ item.fooditem.image.url }}" width="50" class="rounded" alt="Food Image">
+                                {% else %}
+                                  <img src="{% static 'images/no-image.png' %}" width="50" class="rounded" alt="No Image">
+                                {% endif %}
+                              </td>
+                              <td>
+                                <p><b>{{ item.fooditem.food_title }}</b></p>
+                                <a href="{% url 'vendor_detail' item.fooditem.vendor.slug %}" class="text-muted">
+                                  {{ item.fooditem.vendor.vendor_name }}
+                                </a>
+                              </td>
+                              <td class="text-muted">{{ item.fooditem.description }}</td>
+                              <td>{{ item.quantity }}</td>
+                              <td>${{ item.price }}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>   
+                      </table>
+                      
+                      <div class="row mt-5">
+                        <div class="col-md-6 d-flex justify-content-center align-items-start">
+                          <img src="{% static 'images/paid.png' %}" width="200" alt="Paid image">
+                        </div>
+                        <div class="col-md-6">
+                          <div class="bg-light p-3 rounded shadow-sm">
+                            <div class="d-flex justify-content-between mb-2">
+                              <strong>Subtotal:</strong>
+                              <span>${{ order_details.subtotal }}</span>
+                            </div>
+                      
+                            {% for tax in order_details.tax_details %}
+                              <div class="d-flex justify-content-between mb-2">
+                                <strong>{{ tax.type }} ({{ tax.percentage }}%) :</strong>
+                                <span id="tax-{{ tax.type }}">${{ tax.amount }}</span>
+                              </div>
+                            {% endfor %}
+                      
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold fs-5">
+                              <span>Total:</span>
+                              <span id="grand_total">${{ order_details.grand_total }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Order Details -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

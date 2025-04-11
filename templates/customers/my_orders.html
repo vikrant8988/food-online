@@ -1,0 +1,79 @@
+{% extends 'base.html' %} {% load static %}
+{% block content %}
+<!-- Message Display -->
+{% include 'component/alerts.html' %}
+
+
+<div class="main-section">
+  {% include 'customers/c_cover.html' %}
+  <div class="page-section account-header buyer-logged-in">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <!-- load sidebar here -->
+          {% include 'component/c_sidebar.html' %}
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          <div class="user-dashboard loader-holder">
+            <div class="user-holder">
+              <h5 class="text-uppercase">My Orders</h5>
+              <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <div class="user-orders-list">
+                    <div class="responsive-table">
+                      <ul class="table-generic">
+                        <li class="order-heading-titles">
+                          <div>Order #</div>
+                          <div>Name</div>
+                          <div>Order Date</div>
+                          <div>Total Price</div>
+                          <div>Tax</div>
+                          <div>Status</div>
+                          <div>Action</div>
+                        </li>
+                        {% for order in orders %}
+                        <li class="order-heading-titles">
+                          <div><a href="{% url 'c_order_details' order.order_number %}">{{ order.order_number}}</a></div>
+                          <div>{{ order.name }}</div>
+                          <div>{{ order.created_at }}</div>
+                          <div>${{ order.total }}</div>
+                          <div>${{ order.total_tax|default:0|floatformat:2 }}</div>
+                          {% if order.status == 'Completed' %}
+                          <div><span class="order-status"
+                              style="background-color: #047a06; border-radius: 4px; padding: 4px 8px;">Completed</span>
+                          </div>
+                          {% elif order.status == 'Accepted' %}
+                          <div><span class="order-status"
+                              style="background-color: #1e73be; border-radius: 4px; padding: 4px 8px;">Accepted</span>
+                          </div>
+                          {% elif order.status == 'Cancelled' %}
+                          <div><span class="order-status"
+                              style="background-color: #c0392b; border-radius: 4px; padding: 4px 8px;">Cancelled</span>
+                          </div>
+                          {% elif order.status == 'pending' %}
+                          <div><span class="order-status"
+                              style="background-color: #f39c12; border-radius: 4px; padding: 4px 8px;">Pending</span>
+                          </div>
+                          {% else %}
+                          <div><span class="order-status"
+                              style="background-color: #7f8c8d; border-radius: 4px; padding: 4px 8px;">{{ order.status}}</span></div>
+                          {% endif %}
+                          <div>
+                            <a href="{% url 'c_order_details' order.order_number %}" class="btn btn-info btn-sm" style="border-radius: 4px; padding: 4px 8px;">Details</a>
+                          </div>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

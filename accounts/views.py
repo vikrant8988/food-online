@@ -7,6 +7,10 @@ from django.core.exceptions import PermissionDenied
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.template.defaultfilters import slugify
+from django.db.models.functions import Concat
+from django.db.models import Value
+
+from orders.models import Order
 
 from .forms import UserForm
 from .models import (
@@ -145,9 +149,19 @@ def myAccount(request):
 def customerDashboard(request):
   customer = UserProfile.objects.filter(user=request.user).only('profile_picture', 'cover_photo', 'address_line').first()
   customer.user=request.user
+  
+  order_count = Order.objects.filter(user=request.user).count()
+  orders = Order.objects.filter(user=request.user) \
+    .order_by('-updated_at')[:5] \
+    .annotate(name=Concat('first_name', Value(' '), 'last_name')) \
+    .values('order_number', 'created_at', 'total', 'total_tax', 'status', 'name')
+    
+  # print(orders.query)
 
   context ={
-    'customer' : customer
+    'customer' : customer,
+    'orders': orders,
+    'order_count': order_count
   }
   # print(connection.queries[-1])
   return render(request, 'accounts/customerDashboard.html', context)

@@ -28,6 +28,9 @@ DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = []
 
+# fallback url
+LOGIN_URL = '/'
+
 
 # Application definition
 
