@@ -28,7 +28,7 @@
                     <div class="card-body text-center">
                       <a href="#" class="text-decoration-none">
                         <h5 class="card-title">
-                          12345
+                          {{ orders_count }}
                         </h5>
                       </a>
                     </div>
@@ -42,7 +42,7 @@
                     <div class="card-body text-center">
                       <a href="#" class="text-decoration-none">
                         <h5 class="card-title">
-                          $12,345
+                          ${{overall_sum}}
                         </h5>
                       </a>
                     </div>
@@ -56,7 +56,7 @@
                     <div class="card-body text-center">
                       <a href="#" class="text-decoration-none">
                         <h5 class="card-title">
-                          $345
+                          ${{ monthly_sum }}
                         </h5>
                       </a>
                     </div>
@@ -64,66 +64,43 @@
                 </div>
               </div>
               
-              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="row">
-                  <div class="element-title has-border right-filters-row">
-                    <h5>Recent Orders</h5>
-                    <div class="right-filters row pull-right">
-                      <div class="col-lg-6 col-md-6 col-xs-6">
-                        <div class="input-field">
-                          <select class="chosen-select-no-single">
-                            <option selected="selected" value="">Select Orders Status</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Cancelled">Cancelled</option>
-                            <option value="Completed">Completed</option>
-                          </select>
-                        </div>
-                      </div>
-                      
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <h6 class="text-uppercase mt-4">Recent Orders</h6>
               <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <div class="user-orders-list">
                     <div class="responsive-table">
                       <ul class="table-generic">
                         <li class="order-heading-titles">
-                          <div>Order id</div>
-                          <div>Date</div>
+                          <div>Order #</div>
+                          <div>Name</div>
+                          <div>Order Date</div>
                           <div>Total Price</div>
-                          <div>Charges</div>
-                          <div>Received</div>
                           <div>Status</div>
+                          <div>Action</div>
                         </li>
-                        <li class="order-heading-titles">
-                          <div><a href="#" data-toggle="modal" data-target="#order-det-22606">order-22606</a></div>
-                          <div>Apr 9,2020</div>
-                          <div>£ 38.99</div>
-                          <div>£ 3.90</div>
-                          <div>£ 35.09</div>
-                          <div><span class="order-status" style="background-color: #047a06;">Completed</span></div>
-                        </li>
-
-                        <li class="order-heading-titles">
-                          <div><a href="#" data-toggle="modal" data-target="#order-det-22606">order-22583</a></div>
-                          <div>Apr 9,2020</div>
-                          <div>£ 26.22</div>
-                          <div>£ 2.62</div>
-                          <div>£ 23.60</div>
-                          <div><span class="order-status" style="background-color: #1e73be;">Processing</span></div>
-                        </li>
-                        <li class="order-heading-titles">
-                          <div><a href="#" data-toggle="modal" data-target="#order-det-22606">order-22493</a></div>
-                          <div>Apr 2,2020</div>
-                          <div>£ 28.24</div>
-                          <div>£ 2.82</div>
-                          <div>£ 25.42</div>
-                          <div><span class="order-status" style="background-color: #047a06;">Completed</span></div>
-                        </li>
+                        {% for order in orders %}
+                          <li class="order-heading-titles" style="font-size: 13px;">
+                            <div><a href="#" data-toggle="modal" data-target="#order-det-22606">{{ order.order_number }}</a></div>
+                            <div>{{ order.name }}</div>
+                            <div>{{ order.created_at }}</div>
+                            <div>${{ order.get_total_by_vendor }}</div>
+                            {% if order.status == 'Completed' %}
+                                <div><span class="order-status" style="background-color: #047a06; border-radius: 4px; padding: 4px 8px;">Completed</span></div>
+                            {% elif order.status == 'Accepted' %}
+                                <div><span class="order-status" style="background-color: #1e73be; border-radius: 4px; padding: 4px 8px;">Accepted</span></div>
+                            {% elif order.status == 'Cancelled' %}
+                                <div><span class="order-status" style="background-color: #c0392b; border-radius: 4px; padding: 4px 8px;">Cancelled</span></div>
+                            {% elif order.status == 'pending' %}
+                                <div><span class="order-status" style="background-color: #f39c12; border-radius: 4px; padding: 4px 8px;">Pending</span></div>
+                            {% else %}
+                                <div><span class="order-status" style="background-color: #7f8c8d; border-radius: 4px; padding: 4px 8px;">{{ order.status }}</span></div>
+                            {% endif %}
+                            <div>
+                              <a href="{% url 'v_order_details' order.order_number %}" class="btn btn-info btn-sm" style="border-radius: 4px; padding: 4px 8px;">Details</a>
+                          </div>
+                          </li>
+                        {% endfor %}
                       </ul>
-
                     </div>												
                   </div>
                 </div>

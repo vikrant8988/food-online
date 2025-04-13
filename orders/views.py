@@ -1,3 +1,5 @@
+from collections import defaultdict
+from decimal import Decimal
 import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -7,7 +9,7 @@ from django.db import transaction
 import razorpay
 
 from accounts.utils import send_notification
-from marketplace.models import Cart
+from marketplace.models import Cart, Tax
 from marketplace.context_processor import get_cart_amount
 from orders.forms import OrderForm
 from orders.models import Order, OrderedFood, Payment
@@ -17,14 +19,47 @@ from django.conf import settings
 
 client = razorpay.Client(auth=(settings.RZP_KEY_ID, settings.RZP_KEY_SECRET))
 
+def update_tax_details_per_vendor(order_info_per_vendor, dynamic_tax):
+  for vendor_id in order_info_per_vendor.keys():
+    subtotal = order_info_per_vendor[vendor_id]['subtotal']
+    order_info_per_vendor[vendor_id]['grand_total'] = subtotal
+    for t in dynamic_tax:
+      tax_type = t.tax_type
+      tax_percentage = float(t.tax_percentage)
+      tax_amount = round((tax_percentage*subtotal)/100, 2)
+      order_info_per_vendor[vendor_id]['tax_details'].append({
+        'type': tax_type,
+        'percentage': float(tax_percentage),
+        'amount': float(tax_amount)
+      })
+      order_info_per_vendor[vendor_id]['grand_total'] += tax_amount
+
+
 @login_required(login_url='login')
 def place_order(request):
-  cart_queryset = Cart.objects.filter(user=request.user)
+  cart_queryset = Cart.objects.filter(user=request.user).select_related('food_item')
   
   cart_items = list(cart_queryset)
   
   if len(cart_items) <= 0:
     return redirect('marketplace')
+  
+  vendor_ids = []
+  
+  # tax details per vendor and unique vendor per order
+  order_info_per_vendor = defaultdict(lambda: {
+      'subtotal': 0.0,
+      'grand_total': 0.0,
+      'tax_details': []
+  }) 
+
+  dynamic_tax = Tax.objects.filter(is_active=True)
+  for item in cart_items:
+    v_id = item.food_item.vendor.id
+    if v_id not in vendor_ids:
+      vendor_ids.append(v_id)
+    order_info_per_vendor[v_id]['subtotal'] += float(item.food_item.price) * item.quantity
+  update_tax_details_per_vendor(order_info_per_vendor, dynamic_tax)
   
   cart_amount_details = get_cart_amount(request)
 
@@ -53,6 +88,7 @@ def place_order(request):
       order.user = request.user
       order.total = grand_total
       order.tax_data = json.dumps(tax_details)
+      order.total_data = json.dumps(order_info_per_vendor)
       order.total_tax = total_tax
       order.payment_method =  request.POST.get('payment-method')
       order.save()
@@ -72,6 +108,8 @@ def place_order(request):
         context['razorpay_order_id'] = razorpay_order_id
         context['RZP_KEY_ID'] = settings.RZP_KEY_ID
         context['rzp_amount'] = float(order.total * 100)
+        
+      order.vendors.add(*vendor_ids) # Adding Vendors
 
       order_number = generate_order_number(order.id)
       Order.objects.filter(id=order.id).update(order_number=order_number)

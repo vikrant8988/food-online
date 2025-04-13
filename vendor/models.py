@@ -7,7 +7,7 @@ from datetime import datetime, time
 class Vendor(models.Model):
   user = models.OneToOneField(
     User,
-    related_name="user",
+    related_name="vendor",
     on_delete=models.CASCADE,
     limit_choices_to={'role': User.VENDOR}  # Restrict choices at the database level
     )

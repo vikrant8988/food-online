@@ -177,7 +177,7 @@
         sendTransaction(transaction_id, payment_method, status)
         const ele = document.getElementById('paypal-button-container')
         ele.innerHTML = ''
-        ele.innerHTML = '<h4 class="text-center" style="color: white;><i class="fa fa-spinner fa-spin"></i>Please wait..... </h4'
+        ele.innerHTML = '<h4 class="text-center" style="color: white;><i class="fa fa-spinner fa-spin"></i>Please wait..... </h4>'
       });
     }
   }).render('#paypal-button-container');
@@ -219,7 +219,7 @@
         sendTransaction(transaction_id, payment_method, status)
         const ele = document.getElementById('rzp-button1')
         ele.innerHTML = ''
-        ele.innerHTML = '<h4 class="text-center"><i class="fa fa-spinner fa-spin"></i>Please wait..... </h4'
+        ele.innerHTML = '<h4 class="text-center" style="color: white;><i class="fa fa-spinner fa-spin"></i>Please wait..... </h4>'
     },
     "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
       "name": "{{ order.name }}", //your customer's name

@@ -14,8 +14,8 @@
       <li class="{% if url_name == 'opening_hours' %}active{% endif %}">
         <a href="{% url 'opening_hours' %}"><i class="icon-add_shopping_cart"></i>Opening Hours</a>
       </li>
-      <li>
-        <a href="#"><i class="icon-add_shopping_cart"></i>Orders</a>
+      <li class="{% if url_name == 'v_orders' or url_name == 'v_order_details' %}active{% endif %}">
+        <a href="{% url 'v_orders' %}"><i class="icon-add_shopping_cart"></i>Orders</a>
       </li>
       <li>
         <a href="#"><i class="icon-money"></i>Earnings</a>
@@ -24,10 +24,7 @@
         <a href="#"><i class="icon-file-text22"></i>Statement</a>
       </li>
       <li>
-        <a href="#"><i class="icon-unlock-alt"></i>Change Password</a>
-      </li>
-      <li>
-        <a class="logout-btn" href="#"><i class="icon-log-out"></i>Signout</a>
+        <a class="logout-btn" href="{% url 'logout' %}"><i class="icon-log-out"></i>Signout</a>
       </li>
     </ul>
   </div>

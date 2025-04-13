@@ -1,15 +1,21 @@
+from decimal import Decimal
+import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
+from django.db.models.functions import Concat
+from django.db.models import Value
+from django.contrib import messages
+from django.template.defaultfilters import slugify
 
+from marketplace.models import Tax
 from menu.forms import CategoryForm, FoodItemForm
-
+from orders.models import Order, OrderedFood
 from .forms import VendorForm, OpeningHourForm
 from accounts.forms import UserProfileForm
 from .models import Vendor, OpeningHour
 from accounts.models import UserProfile
-from django.contrib import messages
 from menu.models import Category, FoodItem
-from django.template.defaultfilters import slugify
+
 
 def get_vendor(request):
   vendor = Vendor.objects.get(user=request.user)
@@ -242,3 +248,43 @@ def delete_opening_hours(request, pk):
         business_hour = get_object_or_404(OpeningHour, pk=pk)
         business_hour.delete()
         return JsonResponse({'status':'success', 'id':pk})
+        
+def order_details(request, order_number):
+  try:
+    vendor = Vendor.objects.get(user = request.user)
+      
+    order = Order.objects.get(order_number=order_number)
+    ordered_food = OrderedFood.objects.filter(order=order, fooditem__vendor=vendor)
+    order_amount_details = json.loads(order.total_data).get(str(vendor.id), {}) if order.total_data else {}
+    print(order_amount_details)
+    
+    context = {
+      'vendor': vendor,
+      'order': order,
+      'ordered_food': ordered_food,
+      'order_details': order_amount_details
+    }
+    return render(request, 'vendor/order_details.html', context)
+  except:
+    return redirect('v_orders')
+  
+def orders(request):
+  vendor = Vendor.objects.get(user = request.user)
+  
+  orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True) \
+            .order_by('-created_at')
+
+  # orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True) \
+  #   .order_by('-created_at') \
+  #   .annotate(name=Concat('first_name', Value(' '), 'last_name')) \
+  #   .values('order_number', 'created_at', 'total', 'total_tax', 'status', 'name')
+    
+  # order_details = json.loads(order.total_data).get(vendor.id,{})
+  # order.total = order_details['grand_total']
+    
+  # print(orders.query)
+
+  context ={
+    'orders': orders,
+  }
+  return render(request, 'vendor/orders.html', context)

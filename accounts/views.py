@@ -1,3 +1,4 @@
+import json
 from django.db import connection
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -8,7 +9,8 @@ from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.template.defaultfilters import slugify
 from django.db.models.functions import Concat
-from django.db.models import Value
+from django.db.models import Value, Sum
+from django.utils.timezone import now
 
 from orders.models import Order
 
@@ -170,8 +172,37 @@ def customerDashboard(request):
 @user_passes_test(check_role_vendor)
 def vendorDashboard(request):
   vendor = Vendor.objects.get(user = request.user)
+  
+  order_count = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True).count()
+  orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True) \
+    .order_by('-updated_at')
+  
+  # Overall sum
+  overall_sum = 0
+  for order in orders:
+    order_details = json.loads(order.total_data).get(str(vendor.id), {}) if order.total_data else {}
+    overall_sum += order_details.get('grand_total', 0)
+
+  # Monthly sum
+  today = now()
+  monthly_orders = Order.objects.filter(
+    vendors__in=[vendor.id],
+    is_ordered=True,
+    created_at__year=today.year,
+    created_at__month=today.month
+  )
+  
+  monthly_sum = 0
+  for order in monthly_orders:
+    order_details = json.loads(order.total_data).get(str(vendor.id), {}) if order.total_data else {}
+    monthly_sum += order_details.get('grand_total', 0)
+  
   context ={
-    'vendor' : vendor
+    'vendor' : vendor,
+    'orders': orders[:5],
+    'orders_count': order_count,
+    'overall_sum': overall_sum,
+    'monthly_sum': monthly_sum
   }
   return render(request, 'accounts/vendorDashboard.html', context)
 

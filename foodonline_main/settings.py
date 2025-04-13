@@ -48,7 +48,9 @@ INSTALLED_APPS = [
     'menu',
     'marketplace',
     'customers',
-    'orders'
+    'orders',
+    
+    'crequest'
 ]
 
 MIDDLEWARE = [
@@ -61,6 +63,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
     'vendor.middleware.LoginRequiredMiddleware',
+    'crequest.middleware.CrequestMiddleware', # custom middleware created to access request object in models.py
 ]
 
 ROOT_URLCONF = 'foodonline_main.urls'
