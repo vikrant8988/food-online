@@ -29,7 +29,7 @@
 <div id="email">
   <table role="presentation" width="100%">
     <tr>
-      <td  align="center" style="color: white;">
+      <td align="center" style="color: white;">
       <img alt="Logo" src="https://rathank.com/foodonline/logo/logo.png" width="400px" align="middle">
       </td>
     </tr>
@@ -96,7 +96,7 @@
     <tbody>
       <tr>
         <td style="text-align: right;">
-          <strong>Subtotal:</strong> ${{ customer_subtotal }}
+          <strong>Subtotal:</strong> ${{ vendor_subtotal }}
         </td>
       </tr>
       {% for tax in tax_data %}
@@ -109,7 +109,7 @@
       {% endfor %}
       <tr>
         <td style="text-align: right;">
-          <strong>Grand Total:</strong> ${{ order.total }}
+          <strong>Grand Total:</strong> ${{ grand_total }}
         </td>
       </tr>
     </tbody>

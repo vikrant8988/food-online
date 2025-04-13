@@ -6,6 +6,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
+from django.contrib.sites.shortcuts import get_current_site
 import razorpay
 
 from accounts.utils import send_notification
@@ -170,20 +171,43 @@ def payments(request):
       return JsonResponse({'error': 'Order not found'}, status=404)
 
     # Async or delayed task recommended here
+    ordered_food = OrderedFood.objects.filter(order=order)
+    customer_subtotal = order.total - order.total_tax if order.total and order.total_tax else 0
+    tax_data = json.loads(order.tax_data)
     user_email_context = {
       'user': request.user,
       'order': order,
-      'to_email': order.email
+      'to_email': order.email,
+      'ordered_food': ordered_food,
+      'domain': get_current_site(request),
+      'customer_subtotal': round(customer_subtotal,2),
+      'tax_data': tax_data
     }
     send_notification('Order Confirmation', 'orders/emails/order_confirmation_email.html', user_email_context)
 
-    vendor_emails = list(set(item.food_item.vendor.user.email for item in cart_items))
-    vendor_email_context = {
-      'user': request.user,
-      'order': order,
-      'to_email': vendor_emails
-    }
-    send_notification('You have received a new Order', 'orders/emails/order_received.html', vendor_email_context)
+    # send order notification to vendor
+    order_details_per_vendor =  json.loads(order.total_data if order.total_data else '')
+    for order_item in ordered_food:
+      vendor_id = str(order_item.fooditem.vendor.id)
+      v_o_d = order_details_per_vendor[vendor_id]
+      if v_o_d.get('ordered_food'):
+        v_o_d['ordered_food'].append(order_item)
+      else:
+         v_o_d['ordered_food'] = [order_item]
+         v_o_d['email'] = order_item.fooditem.vendor.user.email
+         
+    for key, order_detail in order_details_per_vendor.items():
+      vendor_email_context = {
+        'order': order,
+        'to_email': order_detail.get('email'),
+        'user': request.user,
+        'ordered_food': order_detail.get('ordered_food',[]),
+        'domain': get_current_site(request),
+        'vendor_subtotal': round(order_detail.get('subtotal',0), 2),
+        'grand_total': round(order_detail.get('grand_total',0), 2),
+        'tax_data': order_detail.get('tax_details')
+      }
+      send_notification('You have received a new Order', 'orders/emails/vendor_order_received.html', vendor_email_context)
 
     # Optional: clear cart
     # cart_items.delete()
