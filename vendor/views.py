@@ -2,12 +2,11 @@ from decimal import Decimal
 import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from django.db.models.functions import Concat
-from django.db.models import Value
 from django.contrib import messages
 from django.template.defaultfilters import slugify
+from django.core.paginator import Paginator
+from django.template.loader import render_to_string
 
-from marketplace.models import Tax
 from menu.forms import CategoryForm, FoodItemForm
 from orders.models import Order, OrderedFood
 from .forms import VendorForm, OpeningHourForm
@@ -15,6 +14,7 @@ from accounts.forms import UserProfileForm
 from .models import Vendor, OpeningHour
 from accounts.models import UserProfile
 from menu.models import Category, FoodItem
+
 
 
 def get_vendor(request):
@@ -273,18 +273,31 @@ def orders(request):
   
   orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True) \
             .order_by('-created_at')
-
-  # orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True) \
-  #   .order_by('-created_at') \
-  #   .annotate(name=Concat('first_name', Value(' '), 'last_name')) \
-  #   .values('order_number', 'created_at', 'total', 'total_tax', 'status', 'name')
-    
-  # order_details = json.loads(order.total_data).get(vendor.id,{})
-  # order.total = order_details['grand_total']
+  
+  paginator = Paginator(orders, 2)
+  page = paginator.get_page(1)  # Always first page for HTML load
     
   # print(orders.query)
-
   context ={
-    'orders': orders,
+    'orders': page,
   }
   return render(request, 'vendor/orders.html', context)
+
+def orders_page(request):
+  if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'GET':
+    vendor = Vendor.objects.get(user=request.user)
+    orders_list = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True).order_by('-created_at')
+    paginator = Paginator(orders_list, 2)
+    page_num = request.GET.get('page')
+    page = paginator.get_page(page_num)
+
+    html = render_to_string('vendor/orders_list.html', {'orders': page})
+    data = {
+      'orders_table': html,
+      'has_next': page.has_next(),
+      'next_page': page.next_page_number() if page.has_next() else None,
+    }
+    
+    return JsonResponse(data)
+  else:
+    return JsonResponse({'error': 'Invalid request'}, status=400)

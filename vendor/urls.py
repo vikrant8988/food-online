@@ -29,4 +29,5 @@ urlpatterns = [
     # Order Details
     path('order_details/<int:order_number>/', views.order_details, name="v_order_details"),
     path('orders/', views.orders, name="v_orders"),
+    path('orders/page/', views.orders_page, name='v_orders_page'),
 ]

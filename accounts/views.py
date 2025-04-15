@@ -201,8 +201,8 @@ def vendorDashboard(request):
     'vendor' : vendor,
     'orders': orders[:5],
     'orders_count': order_count,
-    'overall_sum': overall_sum,
-    'monthly_sum': monthly_sum
+    'overall_sum': round(overall_sum, 2),
+    'monthly_sum': round(monthly_sum, 2)
   }
   return render(request, 'accounts/vendorDashboard.html', context)
 

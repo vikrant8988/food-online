@@ -58,3 +58,19 @@ input[type="text"]:-ms-input-placeholder {
   padding: 7px 15px 7px 15px
 }
 
+
+@media only screen and (max-width: 480px) {
+  a.get-start-btn {
+    display: block;
+    margin-top: 15px !important;
+    margin-left: 0px;
+  }
+  .main-search-bar {
+    padding-top: 100px  !important;
+    padding-bottom: 50px !important;
+    background-position: left !important;
+  }
+  .user-dashboard{
+    width: 100% !important;
+  }
+}

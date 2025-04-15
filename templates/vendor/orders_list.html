@@ -1,0 +1,85 @@
+<ul class="table-generic">
+    <li class="order-heading-titles">
+      <div>Order #</div>
+      <div>Name</div>
+      <div>Order Date</div>
+      <div>Total Price</div>
+      <div>Status</div>
+      <div>Action</div>
+    </li>
+
+    {% for order in orders %}
+    <li class="order-heading-titles">
+      <div><a href="{% url 'c_order_details' order.order_number %}">{{ order.order_number }}</a></div>
+      <div>{{ order.name }}</div>
+      <div>{{ order.created_at }}</div>
+      <div>${{ order.get_total_by_vendor }}</div>
+
+      {% if order.status == 'Completed' %}
+        <div><span class="order-status" style="background-color: #047a06; border-radius: 4px; padding: 4px 8px;">Completed</span></div>
+      {% elif order.status == 'Accepted' %}
+        <div><span class="order-status" style="background-color: #1e73be; border-radius: 4px; padding: 4px 8px;">Accepted</span></div>
+      {% elif order.status == 'Cancelled' %}
+        <div><span class="order-status" style="background-color: #c0392b; border-radius: 4px; padding: 4px 8px;">Cancelled</span></div>
+      {% elif order.status == 'pending' %}
+        <div><span class="order-status" style="background-color: #f39c12; border-radius: 4px; padding: 4px 8px;">Pending</span></div>
+      {% else %}
+        <div><span class="order-status" style="background-color: #7f8c8d; border-radius: 4px; padding: 4px 8px;">{{ order.status }}</span></div>
+      {% endif %}
+
+      <div>
+        <a href="{% url 'v_order_details' order.order_number %}" class="btn btn-info btn-sm" style="border-radius: 4px; padding: 4px 8px;">Details</a>
+      </div>
+    </li>
+    {% empty %}
+    <li class="order-heading-titles">
+      <div colspan="6" style="text-align: center;">No orders found.</div>
+    </li>
+    {% endfor %}
+</ul>
+
+{% if orders.paginator.num_pages > 1 %}
+<div class="pagination-container" style="margin-top: 20px; text-align: center;">
+  <nav aria-label="Order pagination">
+    <ul class="pagination justify-content-center">
+
+      {% if orders.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="#" data-page="{{ orders.previous_page_number }}">Previous</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">Previous</span>
+      </li>
+      {% endif %}
+
+      {% for page_num in orders.paginator.page_range %}
+        {% if page_num >= orders.number|add:'-2' and page_num <= orders.number|add:'2' %}
+          {% if page_num == orders.number %}
+            <li class="page-item active">
+              <span class="page-link" style="background-color: #dc3545; border-color: #dc3545; color: #fff !important;">
+                {{ page_num }}
+              </span>
+            </li>
+          {% else %}
+            <li class="page-item">
+              <a class="page-link" href="#" data-page="{{ page_num }}">{{ page_num }}</a>
+            </li>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      {% if orders.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="#" data-page="{{ orders.next_page_number }}">Next</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">Next</span>
+      </li>
+      {% endif %}
+
+    </ul>
+  </nav>
+</div>
+{% endif %} 
