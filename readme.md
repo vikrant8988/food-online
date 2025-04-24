@@ -2,6 +2,35 @@
 
 This is a **full-featured Multi-Vendor Restaurant Marketplace** web application built with **Python Django**. The platform allows multiple restaurant vendors to register, manage their profiles, and offer food items to customers based on **location-based search**, **proximity filters**, and other dynamic features.
 
+
+## 📸 App Screenshots
+
+### 🏠 Homepage
+![Homepage](snapshot/homepage.png)
+
+![Homepage 2](snapshot/homepage_2.png)
+
+### 🔐 Login
+![Login](snapshot/login.png)
+
+### 📝 User Signup
+![User Signup](snapshot/user_signup.png)
+
+### 📊 User Dashboard
+![User Dashboard](snapshot/user_dashboard.png)
+
+### 🍔 Food Item View
+![Food Item](snapshot/food_item.png)
+
+### 🏪 Marketplace
+![Vendors](snapshot/marketplace.png)
+
+### 📝 Vendor Signup
+![Vendor Signup](snapshot/vendor_signup.png)
+
+### 📊 Vendor Dashboard
+![Vendor Dashboard](snapshot/vendor_dashboard.png)
+
 ---
 
 ## 🚀 Features
